@@ -5,7 +5,9 @@ class Read_FUN_VAR:
 
     def read_FUN(self,fileName):
         #Returns a list of list with the best Strike,TC,SP and the position of the line where are they. That line is the number of the block int the next function read_VAR
-
+        strikes_for_median = []
+        TC_for_median=[]
+        SP_for_median =[]
         cnt_of_line =0
         best_STRIKE=[0,0]
         best_TC=[0,0]
@@ -19,6 +21,10 @@ class Read_FUN_VAR:
             TC =float(data[1])
             SP =float(data[2])
 
+            strikes_for_median.append(STRIKE)
+            TC_for_median.append(TC)
+            SP_for_median.append(SP)
+
             if(best_STRIKE[0]<STRIKE):
                 best_STRIKE[0] = STRIKE
                 best_STRIKE[1]= cnt_of_line
@@ -31,9 +37,27 @@ class Read_FUN_VAR:
                 best_SP[0]=SP
                 best_SP[1]=cnt_of_line
 
+
+        position_of_the_median = int(len(strikes_for_median)/2)
+
+        sorted_strike = sorted(strikes_for_median)
+        sorted_TC = sorted(TC_for_median)
+        sorted_SP = sorted(SP_for_median)
+
+
+        median_Strike = sorted_strike[position_of_the_median]
+        median_TC = sorted_TC[position_of_the_median]
+        median_SP = sorted_SP[position_of_the_median]
+
+        line_median_strike = strikes_for_median.index(median_Strike)+1
+        line_median_TC = TC_for_median.index(median_TC)+1
+        line_median_SP = SP_for_median.index(median_SP)+1
+
+        
         file.close()
 
        # result_dictionary = {best_STRIKE[0]:best_STRIKE[1],best_TC[0]:best_TC[1],best_SP[0]:best_SP[1]}
+
 
 
         return [best_STRIKE,best_TC,best_SP]
@@ -91,4 +115,4 @@ read= Read_FUN_VAR()
 
 list_of_list = read.read_FUN("FUN.BB11001.tsv")
 
-read.read_VAR("VAR.BB11001.tsv",list_of_list)
+#read.read_VAR("VAR.BB11001.tsv",list_of_list)
