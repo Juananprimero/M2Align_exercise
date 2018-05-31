@@ -1,16 +1,17 @@
 class ReadFunVar:
-    def __init__(self):
-        pass
+    def __init__(self, file_fun, file_var):
+        self.best_sp = [0, 0]
+        self.best_tc = [0, 0]
+        self.best_strike = [0, 0]
+        self.file_fun = file_fun
+        self.file_var = file_var
 
-    def read_fun(self, fileName):
+    def read_fun(self):
         # Returns a list of list with the best Strike,tc,sp and the position of the line where they are. That line is the number of the block int the next function read_VAR
         strikes_for_median = []
         tc_for_median = []
         sp_for_median = []
-        best_strike = [0, 0]
-        best_tc = [0, 0]
-        best_sp = [0, 0]
-        file = open(fileName, 'r')
+        file = open(self.file_fun, 'r')
         # Changed var line counter for enumerate
         for line_number, line in enumerate(file):
 
@@ -23,17 +24,17 @@ class ReadFunVar:
             tc_for_median.append(tc)
             sp_for_median.append(sp)
 
-            if best_strike[0] < strike:
-                best_strike[0] = strike
-                best_strike[1] = line_number
+            if self.best_strike[0] < strike:
+                self.best_strike[0] = strike
+                self.best_strike[1] = line_number
 
-            if best_tc[0] < tc:
-                best_tc[0] = tc
-                best_tc[1] = line_number
+            if self.best_tc[0] < tc:
+                self.best_tc[0] = tc
+                self.best_tc[1] = line_number
 
-            if best_sp[0] < sp:
-                best_sp[0] = sp
-                best_sp[1] = line_number
+            if self.best_sp[0] < sp:
+                self.best_sp[0] = sp
+                self.best_sp[1] = line_number
 
         position_of_the_median = int(len(strikes_for_median) / 2)
 
@@ -48,58 +49,44 @@ class ReadFunVar:
         line_median_strike = strikes_for_median.index(median_strike) + 1
         line_median_TC = tc_for_median.index(median_tc) + 1
         line_median_SP = sp_for_median.index(median_sp) + 1
-
         file.close()
 
-        # result_dictionary = {best_strike[0]:best_strike[1],best_tc[0]:best_tc[1],best_sp[0]:best_sp[1]}
+    def save_fun_value(self, pair, filename_out):
+        global line
+        with open(self.file_fun, 'r') as file_in:
+            i = 0
+            while i < pair[1]:
+                line = file_in.readline()
+                i += 1
+        with open(filename_out, 'w') as file_out:
+            file_out.write(line)
 
-        return [best_strike, best_tc, best_sp]
-        # print(result_dictionary)
+    def save_var_value(self, pair, filename_out):
+        fout = open(filename_out, 'w')
+        with open(self.file_var, 'r') as file_in:
+            i = 0
+            while i < pair[1]:
+                if file_in.readline() == '':
+                    file_in.readline()
+                    i += 1
+            line = file_in.readline()
+            while line != '':
+                fout.write(line)
+                line = file_in.readline()
+        fout.close()
 
-    # lista_de_bloques = [best_STRIKE[1],best_TC[1],best_SP[1]]
-    # print(lista_de_bloques)
+    def save_fun_values(self):
+        self.save_fun_value('Best_strike_value', self.best_strike)
+        self.save_fun_value('Best_tc_value', self.best_tc)
+        self.save_fun_value('Best_sp_value', self.best_sp)
 
-    def read_var(self, file_name, list_of_lists):
-        cnt_of_blocks = 1
-        cnt_of_empty_lines = 0
-
-        file = open(file_name, 'r')
-        file_strike = open("Best_strike_seq.txt", 'w')
-        file_strike.write("Best STRIKE :" + str(list_of_list[0][0]) + '\n')
-
-        file_tc = open("Best_TC_seq.txt", 'w')
-        file_tc.write("Best TC :" + str(list_of_list[1][0]) + '\n')
-
-        file_sp = open("Best_SP_seq.txt", 'w')
-        file_sp.write("Best SP :" + str(list_of_list[2][0]) + '\n')
-
-        for line in file:
-
-            if line[0] == '\n':
-                cnt_of_empty_lines = cnt_of_empty_lines + 1
-
-            if cnt_of_blocks == list_of_list[0][1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
-                file_strike.write(line + '\n')
-
-            if cnt_of_blocks == list_of_list[1][1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
-                file_tc.write(line + '\n')
-
-            if cnt_of_blocks == list_of_list[2][1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
-                file_sp.write(line + '\n')
-
-            if cnt_of_empty_lines == 2:
-                cnt_of_blocks = cnt_of_blocks + 1
-                cnt_of_empty_lines = 0
-
-        file.close()
-        file_strike.close()
-        file_sp.close()
-        file_tc.close()
+    def save_var_values(self):
+        self.save_var_value('Best_strike_seq', self.best_strike)
+        self.save_var_value('Best_tc_seq', self.best_tc)
+        self.save_var_value('Best_sp_seq', self.best_sp)
 
 
-
-read = ReadFunVar()
-
-list_of_list = read.read_fun("FUN.BB11001.tsv")
-
-# read.read_VAR("VAR.BB11001.tsv",list_of_list)
+read = ReadFunVar("FUN.BB11001.tsv", "VAR.BB11001.tsv")
+read.read_fun()
+read.save_fun_values()
+read.save_var_values()
