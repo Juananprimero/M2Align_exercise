@@ -8,9 +8,9 @@ class ReadFunVar:
         self.best_sp = [0, 0]
         self.best_tc = [0, 0]
         self.best_strike = [0, 0]
-        self.median_sp=[0,0]
-        self.median_tc =[0,0]
-        self.median_strike=[0,0]
+        self.median_sp = [0, 0]
+        self.median_tc = [0, 0]
+        self.median_strike = [0, 0]
         self.file_fun = file_fun
         self.file_var = file_var
         self.read_fun()
@@ -61,9 +61,9 @@ class ReadFunVar:
         line_median_TC = tc_for_median.index(median_tc) + 1
         line_median_SP = sp_for_median.index(median_sp) + 1
 
-        self.median_sp = [median_sp,line_median_SP]
-        self.median_tc = [median_tc,line_median_TC]
-        self.median_strike = [median_strike,line_median_strike]
+        self.median_sp = [median_sp, line_median_SP]
+        self.median_tc = [median_tc, line_median_TC]
+        self.median_strike = [median_strike, line_median_strike]
 
         file.close()
 
@@ -84,10 +84,8 @@ class ReadFunVar:
         with open(filename_out, 'w') as file_out:
             file_out.write(line)
 
-
-    def save_var_value2(self, filename_out_pair, pair):
+    def save_var_value(self, filename_out_pair, pair):
         """
-
         Writes the sequences in a file
         """
         cnt_of_blocks = 1
@@ -96,62 +94,20 @@ class ReadFunVar:
         file = open(self.file_var, 'r')
         file_out = open(filename_out_pair, 'w')
 
-
         for line in file:
 
+            if line[0] == '\n':
+                cnt_of_empty_lines = cnt_of_empty_lines + 1
 
-            if (line[0]=='\n'):
+            if cnt_of_blocks == pair[1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
+                file_out.write(line + '\n')
 
-                cnt_of_empty_lines= cnt_of_empty_lines+1
-
-            if (cnt_of_blocks == pair[1] and line[0] != '\n' and  cnt_of_empty_lines>=0):
-
-                file_out.write(line+'\n')
-
-
-            if( cnt_of_empty_lines==2):
-                cnt_of_blocks = cnt_of_blocks+1
-                cnt_of_empty_lines=0
-
+            if cnt_of_empty_lines == 2:
+                cnt_of_blocks = cnt_of_blocks + 1
+                cnt_of_empty_lines = 0
 
         file.close()
         file_out.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def save_var_value(self, filename_out, pair):
-        '''
-        Saves the alignment of the given position pair to the file filename_out
-        :param filename_out:
-        :param pair:
-        :return:
-        '''
-        fout = open(filename_out, 'w')
-        with open(self.file_var, 'r') as file_in:
-            i = 0
-            while i < pair[1]:
-                if file_in.readline() == '':
-                    file_in.readline()
-                    i += 1
-            line = file_in.readline()
-            while line != '':
-                fout.write(line)
-                line = file_in.readline()
-        fout.close()
-
-
 
     def save_fun_values(self):
         '''
@@ -166,23 +122,22 @@ class ReadFunVar:
         self.save_fun_value('Median_tc_value', self.median_tc)
         self.save_fun_value('Median_sp_value', self.median_sp)
 
-
     def save_var_values(self):
         '''
         Saves best var values
         :return:
         '''
-        self.save_var_value2('Best_strike_seq', self.best_strike)
-        self.save_var_value2('Best_tc_seq', self.best_tc)
-        self.save_var_value2('Best_sp_seq', self.best_sp)
+        self.save_var_value('Best_strike_seq', self.best_strike)
+        self.save_var_value('Best_tc_seq', self.best_tc)
+        self.save_var_value('Best_sp_seq', self.best_sp)
 
-        self.save_var_value2('Median_strike_seq', self.median_strike)
-        self.save_var_value2('Median_tc_seq', self.median_tc)
-        self.save_var_value2('Median_sp_seq', self.median_sp)
+        self.save_var_value('Median_strike_seq', self.median_strike)
+        self.save_var_value('Median_tc_seq', self.median_tc)
+        self.save_var_value('Median_sp_seq', self.median_sp)
 
 
-#Create new ReadFunVar object and get best values
+# Create new ReadFunVar object and get best values
 read = ReadFunVar("FUN.BB11001.tsv", "VAR.BB11001.tsv")
-#Save values to file
+# Save values to file
 read.save_fun_values()
 read.save_var_values()
