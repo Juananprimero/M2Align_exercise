@@ -1,85 +1,100 @@
+class ReadFunVar:
+    def __init__(self, file_fun, file_var):
+        '''
+        Initialize class variables
+        :param file_fun:
+        :param file_var:
+        '''
+        self.best_sp = [0, 0]
+        self.best_tc = [0, 0]
+        self.best_strike = [0, 0]
+        self.median_sp=[0,0]
+        self.median_tc =[0,0]
+        self.median_strike=[0,0]
+        self.file_fun = file_fun
+        self.file_var = file_var
+        self.read_fun()
 
-class Read_FUN_VAR:
-    def __init__(self):
-        pass
-
-    def read_FUN(self,fileName):
-        #Returns a list of list with the best Strike,TC,SP and the position of the line where are they. That line is the number of the block int the next function read_VAR
+    def read_fun(self):
+        """
+        It completes the initial parameters where [score, line_of_the_score]
+        :return:
+        """
         strikes_for_median = []
-        TC_for_median=[]
-        SP_for_median =[]
-        cnt_of_line =0
-        best_STRIKE=[0,0]
-        best_TC=[0,0]
-        best_SP=[0,0]
-        file = open(fileName,'r')
-        for line in file:
-            cnt_of_line = cnt_of_line+1
+        tc_for_median = []
+        sp_for_median = []
+        file = open(self.file_fun, 'r')
+        # Changed var line counter for enumerate
+        for line_number, line in enumerate(file):
+            data = line.split('\t')
+            strike = float(data[0])
+            tc = float(data[1])
+            sp = float(data[2])
 
-            data=line.split('\t')
-            STRIKE=float(data[0])
-            TC =float(data[1])
-            SP =float(data[2])
+            strikes_for_median.append(strike)
+            tc_for_median.append(tc)
+            sp_for_median.append(sp)
 
-            strikes_for_median.append(STRIKE)
-            TC_for_median.append(TC)
-            SP_for_median.append(SP)
+            if self.best_strike[0] < strike:
+                self.best_strike[0] = strike
+                self.best_strike[1] = line_number
 
-            if(best_STRIKE[0]<STRIKE):
-                best_STRIKE[0] = STRIKE
-                best_STRIKE[1]= cnt_of_line
+            if self.best_tc[0] < tc:
+                self.best_tc[0] = tc
+                self.best_tc[1] = line_number
 
-            if(best_TC[0]<TC):
-                best_TC[0]=TC
-                best_TC[1]=cnt_of_line
+            if self.best_sp[0] < sp:
+                self.best_sp[0] = sp
+                self.best_sp[1] = line_number
 
-            if(best_SP[0]<SP):
-                best_SP[0]=SP
-                best_SP[1]=cnt_of_line
-
-
-        position_of_the_median = int(len(strikes_for_median)/2)
+        position_of_the_median = int(len(strikes_for_median) / 2)
 
         sorted_strike = sorted(strikes_for_median)
-        sorted_TC = sorted(TC_for_median)
-        sorted_SP = sorted(SP_for_median)
+        sorted_tc = sorted(tc_for_median)
+        sorted_sp = sorted(sp_for_median)
 
+        median_strike = sorted_strike[position_of_the_median]
+        median_tc = sorted_tc[position_of_the_median]
+        median_sp = sorted_sp[position_of_the_median]
 
-        median_Strike = sorted_strike[position_of_the_median]
-        median_TC = sorted_TC[position_of_the_median]
-        median_SP = sorted_SP[position_of_the_median]
+        line_median_strike = strikes_for_median.index(median_strike) + 1
+        line_median_TC = tc_for_median.index(median_tc) + 1
+        line_median_SP = sp_for_median.index(median_sp) + 1
 
-        line_median_strike = strikes_for_median.index(median_Strike)+1
-        line_median_TC = TC_for_median.index(median_TC)+1
-        line_median_SP = SP_for_median.index(median_SP)+1
+        self.median_sp = [median_sp,line_median_SP]
+        self.median_tc = [median_tc,line_median_TC]
+        self.median_strike = [median_strike,line_median_strike]
 
-        
         file.close()
 
-       # result_dictionary = {best_STRIKE[0]:best_STRIKE[1],best_TC[0]:best_TC[1],best_SP[0]:best_SP[1]}
+    def save_fun_value(self, filename_out, pair):
+        '''
+        Saves the line of the passed pair to the specified file.
+        :param filename_out:
+        :param pair:
+        :return:
+        '''
+        global line
+        with open(self.file_fun, 'r') as file_in:
+            line = file_in.readline()
+            i = 0
+            while i < int(pair[1]):
+                line = file_in.readline()
+                i += 1
+        with open(filename_out, 'w') as file_out:
+            file_out.write(line)
 
 
+    def save_var_value2(self, filename_out_pair, pair):
+        """
 
-        return [best_STRIKE,best_TC,best_SP]
-        #print(result_dictionary)
-       # lista_de_bloques = [best_STRIKE[1],best_TC[1],best_SP[1]]
-        #print(lista_de_bloques)
-
-
-    def read_VAR(self, fileName, list_of_lists):
+        Writes the sequences in a file
+        """
         cnt_of_blocks = 1
-        cnt_of_empty_lines=0
+        cnt_of_empty_lines = 0
 
-
-        file = open(fileName, 'r')
-        file_STRIKE = open("Best_strike_seq.txt",'w')
-        file_STRIKE.write("Best STRIKE :" + str(list_of_list[0][0]) + '\n')
-
-        file_TC = open("Best_TC_seq.txt", 'w')
-        file_TC.write("Best TC :" + str(list_of_list[1][0]) + '\n')
-
-        file_SP = open("Best_SP_seq.txt", 'w')
-        file_SP.write("Best SP :" + str(list_of_list[2][0]) + '\n')
+        file = open(self.file_var, 'r')
+        file_out = open(filename_out_pair, 'w')
 
 
         for line in file:
@@ -89,17 +104,10 @@ class Read_FUN_VAR:
 
                 cnt_of_empty_lines= cnt_of_empty_lines+1
 
-            if (cnt_of_blocks == list_of_list[0][1] and line[0] != '\n' and  cnt_of_empty_lines>=0):
+            if (cnt_of_blocks == pair[1] and line[0] != '\n' and  cnt_of_empty_lines>=0):
 
-                file_STRIKE.write(line+'\n')
+                file_out.write(line+'\n')
 
-            if (cnt_of_blocks == list_of_list[1][1] and line[0] != '\n' and  cnt_of_empty_lines>=0):
-
-                file_TC.write(line+'\n')
-
-            if (cnt_of_blocks == list_of_list[2][1] and line[0] != '\n' and  cnt_of_empty_lines>=0):
-
-                file_SP.write(line+'\n')
 
             if( cnt_of_empty_lines==2):
                 cnt_of_blocks = cnt_of_blocks+1
@@ -107,12 +115,74 @@ class Read_FUN_VAR:
 
 
         file.close()
-        file_STRIKE.close()
-        file_SP.close()
-        file_TC.close()
+        file_out.close()
 
-read= Read_FUN_VAR()
 
-list_of_list = read.read_FUN("FUN.BB11001.tsv")
 
-#read.read_VAR("VAR.BB11001.tsv",list_of_list)
+
+
+
+
+
+
+
+
+
+
+
+
+    def save_var_value(self, filename_out, pair):
+        '''
+        Saves the alignment of the given position pair to the file filename_out
+        :param filename_out:
+        :param pair:
+        :return:
+        '''
+        fout = open(filename_out, 'w')
+        with open(self.file_var, 'r') as file_in:
+            i = 0
+            while i < pair[1]:
+                if file_in.readline() == '':
+                    file_in.readline()
+                    i += 1
+            line = file_in.readline()
+            while line != '':
+                fout.write(line)
+                line = file_in.readline()
+        fout.close()
+
+
+
+    def save_fun_values(self):
+        '''
+        Saves best fun values
+        :return:
+        '''
+        self.save_fun_value('Best_strike_value', self.best_strike)
+        self.save_fun_value('Best_tc_value', self.best_tc)
+        self.save_fun_value('Best_sp_value', self.best_sp)
+
+        self.save_fun_value('Median_strike_value', self.median_strike)
+        self.save_fun_value('Median_tc_value', self.median_tc)
+        self.save_fun_value('Median_sp_value', self.median_sp)
+
+
+    def save_var_values(self):
+        '''
+        Saves best var values
+        :return:
+        '''
+        self.save_var_value2('Best_strike_seq', self.best_strike)
+        self.save_var_value2('Best_tc_seq', self.best_tc)
+        self.save_var_value2('Best_sp_seq', self.best_sp)
+
+        self.save_var_value2('Median_strike_seq', self.median_strike)
+        self.save_var_value2('Median_tc_seq', self.median_tc)
+        self.save_var_value2('Median_sp_seq', self.median_sp)
+
+
+#Create new ReadFunVar object and get best values
+read = ReadFunVar("FUN.BB11001.tsv", "VAR.BB11001.tsv")
+#Save values to file
+read.save_fun_values()
+read.save_var_values()
