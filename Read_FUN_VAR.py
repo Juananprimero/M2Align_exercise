@@ -2,11 +2,11 @@ import sys
 
 class ReadFunVar:
     def __init__(self, file_fun, file_var):
-        '''
+        """
         Initialize class variables
         :param file_fun:
         :param file_var:
-        '''
+        """
         self.best_sp = [0, 0]
         self.best_tc = [0, 0]
         self.best_strike = [0, 0]
@@ -77,12 +77,12 @@ class ReadFunVar:
         file.close()
 
     def save_fun_value(self, filename_out, pair):
-        '''
+        """
         Saves the line of the passed pair to the specified file.
         :param filename_out:
         :param pair:
         :return:
-        '''
+        """
         global line
         with open(self.file_fun, 'r') as file_in:
             line = file_in.readline()
@@ -124,10 +124,10 @@ class ReadFunVar:
             print("OS error: {0}".format(err))
 
     def save_fun_values(self):
-        '''
+        """
         Saves best fun values
         :return:
-        '''
+        """
         self.save_fun_value('Best_strike_value', self.best_strike)
         self.save_fun_value('Best_tc_value', self.best_tc)
         self.save_fun_value('Best_sp_value', self.best_sp)
@@ -137,10 +137,10 @@ class ReadFunVar:
         self.save_fun_value('Median_sp_value', self.median_sp)
 
     def save_var_values(self):
-        '''
+        """
         Saves best var values
         :return:
-        '''
+        """
         self.save_var_value('Best_strike_seq', self.best_strike)
         self.save_var_value('Best_tc_seq', self.best_tc)
         self.save_var_value('Best_sp_seq', self.best_sp)
