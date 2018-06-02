@@ -1,19 +1,32 @@
 from unittest import TestCase
 
-from ReadFunVar import ReadFunVar
+from read_fun_var import ReadFunVar
 
 
 class TestReadFunVar(TestCase):
     def setUp(self):
-        with open('fun_test.tsv', 'w') as ft:
-            ft.write('1 \t 2 \t 3\n')
-            ft.write('4 \t 5 \t 6')
-        with open('fun_test.tsv', 'w') as vt:
-            vt.write('1 \t 2 \t 3\n')
-            vt.write('4 \t 5 \t 6')
         self.rfv = ReadFunVar("fun_test.tsv", "var_test.tsv")
 
     def test_should_save_fun_value_return_fun_file_for_given_pair(self):
         self.rfv.save_fun_value('fun_test_res.txt', self.rfv.best_strike)
         with open('fun_test_res.txt', 'r') as fin:
-            self.assertEqual('4 \t 5 \t 6', fin.readline())
+            self.assertEqual('2.937049554579437\t3.6036036036036037\t77.7027027027027', fin.readline().strip())
+
+    def test_should_save_var_value_return_fun_file_for_given_pair(self):
+        # TODO: FIX THIS TEST
+        self.rfv.save_var_value('var_test_res.txt', self.rfv.best_strike)
+        expected_result = \
+            '>1aab_\n\
+            ---GKGD---PKKPRG-KMSSYAFFVQTSREEHKKKHPDASVNFSEFSKKCSERWKTMSAKE---KGKFEDMAKADKARYEREMKTY-----------IP-------PKGE\n\
+            >1j46_A\n\
+            ------MQDRVKRP----MNAFIVWSRDQRRKMALENPRM--RNSEISKQLGYQWKMLT--EAEKW-PFFQEAQKLQAMHREKYPNY---KY-R---PRRK--AKMLPK--\n\
+            >1k99_A\n\
+            MKK---LKKHPDFPKKP-LTPYFRFFMEKRAKYAKLHPEM--SNLDLTKILSKKYKELP--EKKKM-KYIQDFQREKQEFERNLARF----REDHPDLI---QN--AKK--\n\
+            >2lef_A\n\
+            --------MHIKKP----LNAFMLYMKEMRANVVAE-STL-KESAAINQILGRRWHALSREEQA--K-YYELARKERQLHMQLYPGWSAR-D---NYGKKKKRKRE--K--'
+        with open('var_test_res.txt', 'r') as fin:
+            self.assertEqual(expected_result, ''.join(map(str, fin.readlines())))
+
+    def test_should_assert_if_files_provided_dont_exist(self):
+        #TODO: FIX THIS TEST
+        self.assertRaises(OSError, ReadFunVar("made/up/path.txt", "made/up/path.txt"))
