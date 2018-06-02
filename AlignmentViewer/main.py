@@ -1,3 +1,11 @@
+'''
+author: Marco Muñoz Perez
+email: marcomunozperez@uma.es
+bitbucket: @mampz
+
+TODO CONVERT INTO CLASS.
+'''
+
 from collections import OrderedDict
 from string import ascii_lowercase
 import plotly
