@@ -1,3 +1,5 @@
+import sys
+
 class ReadFunVar:
     def __init__(self, file_fun, file_var):
         '''
@@ -23,29 +25,36 @@ class ReadFunVar:
         strikes_for_median = []
         tc_for_median = []
         sp_for_median = []
-        file = open(self.file_fun, 'r')
-        # Changed var line counter for enumerate
-        for line_number, line in enumerate(file):
-            data = line.split('\t')
-            strike = float(data[0])
-            tc = float(data[1])
-            sp = float(data[2])
+        try:
+            file = open(self.file_fun, 'r')
+            # Changed var line counter for enumerate
+            for line_number, line in enumerate(file):
+                data = line.split('\t')
+                strike = float(data[0])
+                tc = float(data[1])
+                sp = float(data[2])
 
-            strikes_for_median.append(strike)
-            tc_for_median.append(tc)
-            sp_for_median.append(sp)
+                strikes_for_median.append(strike)
+                tc_for_median.append(tc)
+                sp_for_median.append(sp)
 
-            if self.best_strike[0] < strike:
-                self.best_strike[0] = strike
-                self.best_strike[1] = line_number
+                if self.best_strike[0] < strike:
+                    self.best_strike[0] = strike
+                    self.best_strike[1] = line_number
 
-            if self.best_tc[0] < tc:
-                self.best_tc[0] = tc
-                self.best_tc[1] = line_number
+                if self.best_tc[0] < tc:
+                    self.best_tc[0] = tc
+                    self.best_tc[1] = line_number
 
-            if self.best_sp[0] < sp:
-                self.best_sp[0] = sp
-                self.best_sp[1] = line_number
+                if self.best_sp[0] < sp:
+                    self.best_sp[0] = sp
+                    self.best_sp[1] = line_number
+        except FileNotFoundError as err:
+            print("OS error: {0}".format(err))
+            raise
+
+        except ValueError:
+            print("Could not convert data to an integer or data structure mismatch")
 
         position_of_the_median = int(len(strikes_for_median) / 2)
 
@@ -58,11 +67,11 @@ class ReadFunVar:
         median_sp = sorted_sp[position_of_the_median]
 
         line_median_strike = strikes_for_median.index(median_strike) + 1
-        line_median_TC = tc_for_median.index(median_tc) + 1
-        line_median_SP = sp_for_median.index(median_sp) + 1
+        line_median_tc = tc_for_median.index(median_tc) + 1
+        line_median_sp = sp_for_median.index(median_sp) + 1
 
-        self.median_sp = [median_sp, line_median_SP]
-        self.median_tc = [median_tc, line_median_TC]
+        self.median_sp = [median_sp, line_median_sp]
+        self.median_tc = [median_tc, line_median_tc]
         self.median_strike = [median_strike, line_median_strike]
 
         file.close()
@@ -91,23 +100,28 @@ class ReadFunVar:
         cnt_of_blocks = 1
         cnt_of_empty_lines = 0
 
-        file = open(self.file_var, 'r')
-        file_out = open(filename_out_pair, 'w')
+        try:
 
-        for line in file:
+            file = open(self.file_var, 'r')
+            file_out = open(filename_out_pair, 'w')
 
-            if line[0] == '\n':
-                cnt_of_empty_lines = cnt_of_empty_lines + 1
+            for line in file:
 
-            if cnt_of_blocks == pair[1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
-                file_out.write(line + '\n')
+                if line[0] == '\n':
+                    cnt_of_empty_lines = cnt_of_empty_lines + 1
 
-            if cnt_of_empty_lines == 2:
-                cnt_of_blocks = cnt_of_blocks + 1
-                cnt_of_empty_lines = 0
+                if cnt_of_blocks == pair[1] and line[0] != '\n' and cnt_of_empty_lines >= 0:
+                    file_out.write(line)
 
-        file.close()
-        file_out.close()
+                if cnt_of_empty_lines == 2:
+                    cnt_of_blocks = cnt_of_blocks + 1
+                    cnt_of_empty_lines = 0
+
+            file.close()
+            file_out.close()
+
+        except OSError as err:
+            print("OS error: {0}".format(err))
 
     def save_fun_values(self):
         '''

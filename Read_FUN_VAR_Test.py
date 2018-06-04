@@ -1,5 +1,5 @@
 from unittest import TestCase
-from ReadFunVar import ReadFunVar
+from read_fun_var import ReadFunVar
 
 class TestReadFunVar(TestCase):
     def setUp(self):
