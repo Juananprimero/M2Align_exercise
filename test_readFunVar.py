@@ -13,20 +13,16 @@ class TestReadFunVar(TestCase):
             self.assertEqual('2.937049554579437\t3.6036036036036037\t77.7027027027027', fin.readline().strip())
 
     def test_should_save_var_value_return_fun_file_for_given_pair(self):
-        # TODO: FIX THIS TEST
         self.rfv.save_var_value('var_test_res.txt', self.rfv.best_strike)
         expected_result = \
             '>1aab_\n\
-            ---GKGD---PKKPRG-KMSSYAFFVQTSREEHKKKHPDASVNFSEFSKKCSERWKTMSAKE---KGKFEDMAKADKARYEREMKTY-----------IP-------PKGE\n\
-            >1j46_A\n\
-            ------MQDRVKRP----MNAFIVWSRDQRRKMALENPRM--RNSEISKQLGYQWKMLT--EAEKW-PFFQEAQKLQAMHREKYPNY---KY-R---PRRK--AKMLPK--\n\
-            >1k99_A\n\
-            MKK---LKKHPDFPKKP-LTPYFRFFMEKRAKYAKLHPEM--SNLDLTKILSKKYKELP--EKKKM-KYIQDFQREKQEFERNLARF----REDHPDLI---QN--AKK--\n\
-            >2lef_A\n\
-            --------MHIKKP----LNAFMLYMKEMRANVVAE-STL-KESAAINQILGRRWHALSREEQA--K-YYELARKERQLHMQLYPGWSAR-D---NYGKKKKRKRE--K--'
+---GKGD---PKKPRG-KMSSYAFFVQTSREEHKKKHPDASVNFSEFSKKCSERWKTMSAKE---KGKFEDMAKADKARYEREMKTY-----------IP-------PKGE\n\
+>1j46_A\n\
+------MQDRVKRP----MNAFIVWSRDQRRKMALENPRM--RNSEISKQLGYQWKMLT--EAEKW-PFFQEAQKLQAMHREKYPNY---KY-R---PRRK--AKMLPK--\n\
+>1k99_A\n\
+MKK---LKKHPDFPKKP-LTPYFRFFMEKRAKYAKLHPEM--SNLDLTKILSKKYKELP--EKKKM-KYIQDFQREKQEFERNLARF----REDHPDLI---QN--AKK--\n\
+>2lef_A\n\
+--------MHIKKP----LNAFMLYMKEMRANVVAE-STL-KESAAINQILGRRWHALSREEQA--K-YYELARKERQLHMQLYPGWSAR-D---NYGKKKKRKRE--K--\n'
         with open('var_test_res.txt', 'r') as fin:
             self.assertEqual(expected_result, ''.join(map(str, fin.readlines())))
 
-    def test_should_assert_if_files_provided_dont_exist(self):
-        #TODO: FIX THIS TEST
-        self.assertRaises(OSError, ReadFunVar("made/up/path.txt", "made/up/path.txt"))

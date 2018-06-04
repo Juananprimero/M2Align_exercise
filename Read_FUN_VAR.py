@@ -40,15 +40,15 @@ class ReadFunVar:
 
                 if self.best_strike[0] < strike:
                     self.best_strike[0] = strike
-                    self.best_strike[1] = line_number
+                    self.best_strike[1] = line_number+1
 
                 if self.best_tc[0] < tc:
                     self.best_tc[0] = tc
-                    self.best_tc[1] = line_number
+                    self.best_tc[1] = line_number+1
 
                 if self.best_sp[0] < sp:
                     self.best_sp[0] = sp
-                    self.best_sp[1] = line_number
+                    self.best_sp[1] = line_number+1
         except FileNotFoundError as err:
             print("OS error: {0}".format(err))
             raise
@@ -142,6 +142,7 @@ class ReadFunVar:
         :return:
         """
         self.save_var_value('Best_strike_seq', self.best_strike)
+        print(self.best_strike)
         self.save_var_value('Best_tc_seq', self.best_tc)
         self.save_var_value('Best_sp_seq', self.best_sp)
 
